@@ -3,8 +3,8 @@ const { Post, User, Comment } = require("../../models");
 const sequelize = require("../../config/connection");
 const withAuth = require("../../utils/auth");
 
-router.get("/", (req, res) => {
-  Post.findAll({
+router.get("/", async (req, res) => {
+  const dbPostData = await Post.findAll({
     attributes: ["id", "title", "content", "created_at"],
     order: [["created_at", "DESC"]],
     include: [
@@ -21,12 +21,11 @@ router.get("/", (req, res) => {
         },
       },
     ],
-  })
-    .then((dbPostData) => res.json(dbPostData.reverse()))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
+  });
+  res.render("dashboard").catch((err) => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 router.get("/:id", (req, res) => {
   Post.findOne({
